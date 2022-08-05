@@ -5,6 +5,7 @@ from collections import namedtuple
 
 Dependency = namedtuple("Dependency", ["package", "version", "target"])
 
+
 def get_csproj_paths(start="."):
     for root, dirs, files in os.walk(start):
         for f in files:
@@ -21,7 +22,10 @@ def get_referenced_packages(csproj):
         target = None
 
     refs = tree.getElementsByTagName("PackageReference")
-    return [Dependency(n.getAttribute("Include"), n.getAttribute("Version"), target) for n in refs]
+    return [
+        Dependency(n.getAttribute("Include"), n.getAttribute("Version"), target)
+        for n in refs
+    ]
 
 
 def to_packages_config(refs):
@@ -35,13 +39,12 @@ def to_packages_config(refs):
         if ref.target is not None:
             package.setAttribute("targetFramework", ref.target)
         packages.appendChild(package)
-    
+
     return doc.toxml()
 
 
-
-
 projects = get_csproj_paths()
+refs = []
 for project in projects:
-    refs = get_referenced_packages(project)
-    print(to_packages_config(refs))
+    refs += get_referenced_packages(project)
+print(to_packages_config(refs))
