@@ -18,7 +18,7 @@ def get_referenced_packages(csproj):
 
     try:
         target = tree.getElementsByTagName("TargetFramework")[0].firstChild.nodeValue
-    except IndexError:
+    except (IndexError, AttributeError):
         target = None
 
     refs = tree.getElementsByTagName("PackageReference")
